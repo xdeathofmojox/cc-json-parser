@@ -1,13 +1,17 @@
 { ... }:
 {
   perSystem =
-    { pkgs, ... }:
+    {
+      pkgs,
+      craneLib,
+      commonArgs,
+      cargoArtifacts,
+      ...
+    }:
     {
       packages = {
-        default = pkgs.cc-json-parser;
-        inherit (pkgs)
-          cc-json-parser
-          ;
+        default = craneLib.buildPackage (commonArgs // { inherit cargoArtifacts; });
+        cc-json-parser = craneLib.buildPackage (commonArgs // { inherit cargoArtifacts; });
       };
       legacyPackages = pkgs;
     };
