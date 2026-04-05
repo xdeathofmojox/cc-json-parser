@@ -1,6 +1,6 @@
 use crate::data::JsonMember;
 
 #[derive(PartialEq, Eq, Debug)]
-pub struct JsonObject {
+pub struct Object {
     pub members: Vec<JsonMember>,
 }

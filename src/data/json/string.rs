@@ -1,4 +1,4 @@
 #[derive(PartialEq, Eq, Debug)]
-pub struct JsonString {
-    pub string: String,
+pub struct String {
+    pub string: std::string::String,
 }

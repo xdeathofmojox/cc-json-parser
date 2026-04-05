@@ -1,7 +1,7 @@
 use crate::data::{JsonArray, JsonNumber, JsonObject, JsonString};
 
 #[derive(PartialEq, Eq, Debug)]
-pub enum JsonValue {
+pub enum Value {
     Object(JsonObject),
     Array(JsonArray),
     String(JsonString),
