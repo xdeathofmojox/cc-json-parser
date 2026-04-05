@@ -1,11 +1,10 @@
 use std::env;
 use std::fs::File;
-use std::io::{self, Error, BufReader, BufRead};
+use std::io::{self, BufRead, BufReader, Error};
 use std::process::ExitCode;
 
-
-mod lex;
 mod data;
+mod lex;
 mod parse;
 
 use data::JsonData;
@@ -29,7 +28,11 @@ fn main() -> ExitCode {
     for filename in filenames {
         let result = handle_file(filename.as_str());
         if result.is_err() {
-            println!("Invalid: {:?} - {:?}", filename, result.err().unwrap().to_string());
+            println!(
+                "Invalid: {:?} - {:?}",
+                filename,
+                result.err().unwrap().to_string()
+            );
             status = 1;
         } else {
             println!("Valid: {:?}", filename);
@@ -72,12 +75,8 @@ mod tests {
     fn test_step_1_valid() {
         let expected = JsonData {
             element: JsonElement {
-                value: JsonValue::Object(
-                    JsonObject {
-                        members: vec![]
-                    }
-                )
-            }
+                value: JsonValue::Object(JsonObject { members: vec![] }),
+            },
         };
 
         let json_result = handle_file("tests/step1/valid.json");
@@ -96,23 +95,19 @@ mod tests {
     fn test_step_2_valid() {
         let expected = JsonData {
             element: JsonElement {
-                value: JsonValue::Object(
-                    JsonObject {
-                        members: vec![
-                            JsonMember {
-                                string: JsonString {
-                                    string: String::from("key")
-                                },
-                                element: JsonElement {
-                                    value: JsonValue::String(JsonString {
-                                        string: String::from("value")
-                                    })
-                                }
-                            }
-                        ]
-                    }
-                )
-            }
+                value: JsonValue::Object(JsonObject {
+                    members: vec![JsonMember {
+                        string: JsonString {
+                            string: String::from("key"),
+                        },
+                        element: JsonElement {
+                            value: JsonValue::String(JsonString {
+                                string: String::from("value"),
+                            }),
+                        },
+                    }],
+                }),
+            },
         };
 
         let json_result = handle_file("tests/step2/valid.json");
@@ -131,33 +126,31 @@ mod tests {
     fn test_step_2_valid_2() {
         let expected = JsonData {
             element: JsonElement {
-                value: JsonValue::Object(
-                    JsonObject {
-                        members: vec![
-                            JsonMember {
-                                string: JsonString {
-                                    string: String::from("key")
-                                },
-                                element: JsonElement {
-                                    value: JsonValue::String(JsonString {
-                                        string: String::from("value")
-                                    })
-                                }
+                value: JsonValue::Object(JsonObject {
+                    members: vec![
+                        JsonMember {
+                            string: JsonString {
+                                string: String::from("key"),
                             },
-                            JsonMember {
-                                string: JsonString {
-                                    string: String::from("key2")
-                                },
-                                element: JsonElement {
-                                    value: JsonValue::String(JsonString {
-                                        string: String::from("value")
-                                    })
-                                }
-                            }
-                        ]
-                    }
-                )
-            }
+                            element: JsonElement {
+                                value: JsonValue::String(JsonString {
+                                    string: String::from("value"),
+                                }),
+                            },
+                        },
+                        JsonMember {
+                            string: JsonString {
+                                string: String::from("key2"),
+                            },
+                            element: JsonElement {
+                                value: JsonValue::String(JsonString {
+                                    string: String::from("value"),
+                                }),
+                            },
+                        },
+                    ],
+                }),
+            },
         };
 
         let json_result = handle_file("tests/step2/valid2.json");
@@ -176,64 +169,63 @@ mod tests {
     fn test_step_3_valid() {
         let expected = JsonData {
             element: JsonElement {
-                value: JsonValue::Object(
-                    JsonObject {
-                        members: vec![
-                            JsonMember {
-                                string: JsonString {
-                                    string: String::from("key1")
-                                },
-                                element: JsonElement {
-                                    value: JsonValue::True
-                                }
+                value: JsonValue::Object(JsonObject {
+                    members: vec![
+                        JsonMember {
+                            string: JsonString {
+                                string: String::from("key1"),
                             },
-                            JsonMember {
-                                string: JsonString {
-                                    string: String::from("key2")
-                                },
-                                element: JsonElement {
-                                    value: JsonValue::False
-                                }
+                            element: JsonElement {
+                                value: JsonValue::True,
                             },
-                            JsonMember {
-                                string: JsonString {
-                                    string: String::from("key3")
-                                },
-                                element: JsonElement {
-                                    value: JsonValue::Null
-                                }
+                        },
+                        JsonMember {
+                            string: JsonString {
+                                string: String::from("key2"),
                             },
-                            JsonMember {
-                                string: JsonString {
-                                    string: String::from("key4")
-                                },
-                                element: JsonElement {
-                                    value: JsonValue::String(JsonString {
-                                        string: String::from("value"),
-                                    })
-                                }
+                            element: JsonElement {
+                                value: JsonValue::False,
                             },
-                            JsonMember {
-                                string: JsonString {
-                                    string: String::from("key5")
-                                },
-                                element: JsonElement {
-                                    value: JsonValue::Number(JsonNumber {
-                                        integer: 101,
-                                        fraction: None,
-                                        exponent: None,
-                                    })
-                                }
+                        },
+                        JsonMember {
+                            string: JsonString {
+                                string: String::from("key3"),
                             },
-                        ]
-                    }
-                )
-            }
+                            element: JsonElement {
+                                value: JsonValue::Null,
+                            },
+                        },
+                        JsonMember {
+                            string: JsonString {
+                                string: String::from("key4"),
+                            },
+                            element: JsonElement {
+                                value: JsonValue::String(JsonString {
+                                    string: String::from("value"),
+                                }),
+                            },
+                        },
+                        JsonMember {
+                            string: JsonString {
+                                string: String::from("key5"),
+                            },
+                            element: JsonElement {
+                                value: JsonValue::Number(JsonNumber {
+                                    integer: 101,
+                                    fraction: None,
+                                    exponent: None,
+                                }),
+                            },
+                        },
+                    ],
+                }),
+            },
         };
 
         let json_result = handle_file("tests/step3/valid.json");
         assert!(json_result.is_ok());
-        assert_eq!(json_result.unwrap(), expected);    }
+        assert_eq!(json_result.unwrap(), expected);
+    }
 
     #[test]
     fn test_step_3_invalid() {
@@ -246,137 +238,126 @@ mod tests {
     fn test_step_4_valid() {
         let expected = JsonData {
             element: JsonElement {
-                value: JsonValue::Object(
-                    JsonObject {
-                        members: vec![
-                            JsonMember {
-                                string: JsonString {
-                                    string: String::from("key")
-                                },
-                                element: JsonElement {
-                                    value: JsonValue::String(JsonString {
-                                        string: String::from("value")
-                                    })
-                                }
+                value: JsonValue::Object(JsonObject {
+                    members: vec![
+                        JsonMember {
+                            string: JsonString {
+                                string: String::from("key"),
                             },
-                            JsonMember {
-                                string: JsonString {
-                                    string: String::from("key-n")
-                                },
-                                element: JsonElement {
-                                    value: JsonValue::Number(JsonNumber {
-                                        integer: 101,
-                                        fraction: None,
-                                        exponent: None,
-                                    })
-                                }
+                            element: JsonElement {
+                                value: JsonValue::String(JsonString {
+                                    string: String::from("value"),
+                                }),
                             },
-                            JsonMember {
-                                string: JsonString {
-                                    string: String::from("key-o")
-                                },
-                                element: JsonElement {
-                                    value: JsonValue::Object(JsonObject {
-                                        members: vec![]
-                                    })
-                                }
+                        },
+                        JsonMember {
+                            string: JsonString {
+                                string: String::from("key-n"),
                             },
-                            JsonMember {
-                                string: JsonString {
-                                    string: String::from("key-l")
-                                },
-                                element: JsonElement {
-                                    value: JsonValue::Array(JsonArray {
-                                        elements: vec![]
-                                    })
-                                }
+                            element: JsonElement {
+                                value: JsonValue::Number(JsonNumber {
+                                    integer: 101,
+                                    fraction: None,
+                                    exponent: None,
+                                }),
                             },
-                        ]
-                    }
-                )
-            }
+                        },
+                        JsonMember {
+                            string: JsonString {
+                                string: String::from("key-o"),
+                            },
+                            element: JsonElement {
+                                value: JsonValue::Object(JsonObject { members: vec![] }),
+                            },
+                        },
+                        JsonMember {
+                            string: JsonString {
+                                string: String::from("key-l"),
+                            },
+                            element: JsonElement {
+                                value: JsonValue::Array(JsonArray { elements: vec![] }),
+                            },
+                        },
+                    ],
+                }),
+            },
         };
 
         let json_result = handle_file("tests/step4/valid.json");
         assert!(json_result.is_ok());
-        assert_eq!(json_result.unwrap(), expected);    
+        assert_eq!(json_result.unwrap(), expected);
     }
 
     #[test]
     fn test_step_4_valid_2() {
         let expected = JsonData {
             element: JsonElement {
-                value: JsonValue::Object(
-                    JsonObject {
-                        members: vec![
-                            JsonMember {
-                                string: JsonString {
-                                    string: String::from("key")
-                                },
-                                element: JsonElement {
-                                    value: JsonValue::String(JsonString {
-                                        string: String::from("value")
-                                    })
-                                }
+                value: JsonValue::Object(JsonObject {
+                    members: vec![
+                        JsonMember {
+                            string: JsonString {
+                                string: String::from("key"),
                             },
-                            JsonMember {
-                                string: JsonString {
-                                    string: String::from("key-n")
-                                },
-                                element: JsonElement {
-                                    value: JsonValue::Number(JsonNumber {
-                                        integer: 101,
-                                        fraction: None,
-                                        exponent: None,
-                                    })
-                                }
+                            element: JsonElement {
+                                value: JsonValue::String(JsonString {
+                                    string: String::from("value"),
+                                }),
                             },
-                            JsonMember {
-                                string: JsonString {
-                                    string: String::from("key-o")
-                                },
-                                element: JsonElement {
-                                    value: JsonValue::Object(JsonObject {
-                                        members: vec![
-                                            JsonMember {
-                                                string: JsonString {
-                                                    string: String::from("inner key")
-                                                },
-                                                element: JsonElement {
-                                                    value: JsonValue::String(JsonString {
-                                                        string: String::from("inner value")
-                                                    })
-                                                }
-                                            }
-                                        ]
-                                    })
-                                }
+                        },
+                        JsonMember {
+                            string: JsonString {
+                                string: String::from("key-n"),
                             },
-                            JsonMember {
-                                string: JsonString {
-                                    string: String::from("key-l")
-                                },
-                                element: JsonElement {
-                                    value: JsonValue::Array(JsonArray {
-                                        elements: vec![
-                                            JsonElement {
-                                                value: JsonValue::String(JsonString {
-                                                    string: String::from("list value")
-                                                })
-                                            }
-                                        ]
-                                    })
-                                }
+                            element: JsonElement {
+                                value: JsonValue::Number(JsonNumber {
+                                    integer: 101,
+                                    fraction: None,
+                                    exponent: None,
+                                }),
                             },
-                        ]
-                    }
-                )
-            }
+                        },
+                        JsonMember {
+                            string: JsonString {
+                                string: String::from("key-o"),
+                            },
+                            element: JsonElement {
+                                value: JsonValue::Object(JsonObject {
+                                    members: vec![JsonMember {
+                                        string: JsonString {
+                                            string: String::from("inner key"),
+                                        },
+                                        element: JsonElement {
+                                            value: JsonValue::String(JsonString {
+                                                string: String::from("inner value"),
+                                            }),
+                                        },
+                                    }],
+                                }),
+                            },
+                        },
+                        JsonMember {
+                            string: JsonString {
+                                string: String::from("key-l"),
+                            },
+                            element: JsonElement {
+                                value: JsonValue::Array(JsonArray {
+                                    elements: vec![JsonElement {
+                                        value: JsonValue::String(JsonString {
+                                            string: String::from("list value"),
+                                        }),
+                                    }],
+                                }),
+                            },
+                        },
+                    ],
+                }),
+            },
         };
 
         let json_result = handle_file("tests/step4/valid2.json");
         assert!(json_result.is_ok());
-        assert_eq!(json_result.unwrap(), expected);       }
+        assert_eq!(json_result.unwrap(), expected);
+    }
 
     #[test]
     fn test_step_4_invalid() {
@@ -389,121 +370,119 @@ mod tests {
     fn test_step_5_valid() {
         let expected = JsonData {
             element: JsonElement {
-                value: JsonValue::Object(
-                    JsonObject {
-                        members: vec![
-                            JsonMember {
-                                string: JsonString {
-                                    string: String::from("key1")
-                                },
-                                element: JsonElement {
-                                    value: JsonValue::Number(JsonNumber { 
-                                        integer: 100, 
-                                        fraction: None, 
-                                        exponent: None,
-                                    })
-                                }
+                value: JsonValue::Object(JsonObject {
+                    members: vec![
+                        JsonMember {
+                            string: JsonString {
+                                string: String::from("key1"),
                             },
-                            JsonMember {
-                                string: JsonString {
-                                    string: String::from("key2")
-                                },
-                                element: JsonElement {
-                                    value: JsonValue::Number(JsonNumber { 
-                                        integer: 100, 
-                                        fraction: Some(0), 
-                                        exponent: None,
-                                    })
-                                }
+                            element: JsonElement {
+                                value: JsonValue::Number(JsonNumber {
+                                    integer: 100,
+                                    fraction: None,
+                                    exponent: None,
+                                }),
                             },
-                            JsonMember {
-                                string: JsonString {
-                                    string: String::from("key3")
-                                },
-                                element: JsonElement {
-                                    value: JsonValue::Number(JsonNumber { 
-                                        integer: 100, 
-                                        fraction: Some(0), 
-                                        exponent: Some(10),
-                                    })
-                                }
+                        },
+                        JsonMember {
+                            string: JsonString {
+                                string: String::from("key2"),
                             },
-                            JsonMember {
-                                string: JsonString {
-                                    string: String::from("key4")
-                                },
-                                element: JsonElement {
-                                    value: JsonValue::Number(JsonNumber { 
-                                        integer: 100, 
-                                        fraction: Some(0), 
-                                        exponent: Some(-10),
-                                    })
-                                }
+                            element: JsonElement {
+                                value: JsonValue::Number(JsonNumber {
+                                    integer: 100,
+                                    fraction: Some(0),
+                                    exponent: None,
+                                }),
                             },
-                            JsonMember {
-                                string: JsonString {
-                                    string: String::from("key5")
-                                },
-                                element: JsonElement {
-                                    value: JsonValue::Number(JsonNumber { 
-                                        integer: 100, 
-                                        fraction: Some(0), 
-                                        exponent: Some(10),
-                                    })
-                                }
+                        },
+                        JsonMember {
+                            string: JsonString {
+                                string: String::from("key3"),
                             },
-                            JsonMember {
-                                string: JsonString {
-                                    string: String::from("key6")
-                                },
-                                element: JsonElement {
-                                    value: JsonValue::Number(JsonNumber { 
-                                        integer: 999, 
-                                        fraction: Some(9999), 
-                                        exponent: Some(999),
-                                    })
-                                }
+                            element: JsonElement {
+                                value: JsonValue::Number(JsonNumber {
+                                    integer: 100,
+                                    fraction: Some(0),
+                                    exponent: Some(10),
+                                }),
                             },
-                            JsonMember {
-                                string: JsonString {
-                                    string: String::from("key7")
-                                },
-                                element: JsonElement {
-                                    value: JsonValue::Number(JsonNumber { 
-                                        integer: 0, 
-                                        fraction: Some(0), 
-                                        exponent: Some(0),
-                                    })
-                                }
+                        },
+                        JsonMember {
+                            string: JsonString {
+                                string: String::from("key4"),
                             },
-                            JsonMember {
-                                string: JsonString {
-                                    string: String::from("key8")
-                                },
-                                element: JsonElement {
-                                    value: JsonValue::Number(JsonNumber { 
-                                        integer: 100, 
-                                        fraction: None, 
-                                        exponent: Some(8),
-                                    })
-                                }
+                            element: JsonElement {
+                                value: JsonValue::Number(JsonNumber {
+                                    integer: 100,
+                                    fraction: Some(0),
+                                    exponent: Some(-10),
+                                }),
                             },
-                            JsonMember {
-                                string: JsonString {
-                                    string: String::from("key9")
-                                },
-                                element: JsonElement {
-                                    value: JsonValue::Number(JsonNumber { 
-                                        integer: 9_223_372_036_854_775_807i64, 
-                                        fraction: None, 
-                                        exponent: None,
-                                    })
-                                }
+                        },
+                        JsonMember {
+                            string: JsonString {
+                                string: String::from("key5"),
                             },
-                        ]
-                    }
-                )
-            }
+                            element: JsonElement {
+                                value: JsonValue::Number(JsonNumber {
+                                    integer: 100,
+                                    fraction: Some(0),
+                                    exponent: Some(10),
+                                }),
+                            },
+                        },
+                        JsonMember {
+                            string: JsonString {
+                                string: String::from("key6"),
+                            },
+                            element: JsonElement {
+                                value: JsonValue::Number(JsonNumber {
+                                    integer: 999,
+                                    fraction: Some(9999),
+                                    exponent: Some(999),
+                                }),
+                            },
+                        },
+                        JsonMember {
+                            string: JsonString {
+                                string: String::from("key7"),
+                            },
+                            element: JsonElement {
+                                value: JsonValue::Number(JsonNumber {
+                                    integer: 0,
+                                    fraction: Some(0),
+                                    exponent: Some(0),
+                                }),
+                            },
+                        },
+                        JsonMember {
+                            string: JsonString {
+                                string: String::from("key8"),
+                            },
+                            element: JsonElement {
+                                value: JsonValue::Number(JsonNumber {
+                                    integer: 100,
+                                    fraction: None,
+                                    exponent: Some(8),
+                                }),
+                            },
+                        },
+                        JsonMember {
+                            string: JsonString {
+                                string: String::from("key9"),
+                            },
+                            element: JsonElement {
+                                value: JsonValue::Number(JsonNumber {
+                                    integer: 9_223_372_036_854_775_807i64,
+                                    fraction: None,
+                                    exponent: None,
+                                }),
+                            },
+                        },
+                    ],
+                }),
+            },
         };
 
         let json_result = handle_file("tests/step5/valid.json");
@@ -515,22 +494,20 @@ mod tests {
     fn test_step_5_valid_2() {
         let expected = JsonData {
             element: JsonElement {
-                value: JsonValue::Array(
-                    JsonArray {
-                        elements: vec![
-                            JsonElement {
-                                value: JsonValue::True
-                            },
-                            JsonElement {
-                                value: JsonValue::False
-                            },
-                            JsonElement {
-                                value: JsonValue::Null
-                            },
-                        ]
-                    }
-                )
-            }
+                value: JsonValue::Array(JsonArray {
+                    elements: vec![
+                        JsonElement {
+                            value: JsonValue::True,
+                        },
+                        JsonElement {
+                            value: JsonValue::False,
+                        },
+                        JsonElement {
+                            value: JsonValue::Null,
+                        },
+                    ],
+                }),
+            },
         };
         let json_result = handle_file("tests/step5/valid2.json");
         assert!(json_result.is_ok());
@@ -541,43 +518,41 @@ mod tests {
     fn test_step_5_valid_3() {
         let expected = JsonData {
             element: JsonElement {
-                value: JsonValue::Object(
-                    JsonObject {
-                        members: vec![
-                            JsonMember {
-                                string: JsonString{
-                                    string: String::from("chars")
-                                },
-                                element: JsonElement {
-                                    value: JsonValue::String(JsonString {
-                                        string: String::from("\"\\/\\b\\f\n\r\t")
-                                    })
-                                }
+                value: JsonValue::Object(JsonObject {
+                    members: vec![
+                        JsonMember {
+                            string: JsonString {
+                                string: String::from("chars"),
                             },
-                            JsonMember {
-                                string: JsonString{
-                                    string: String::from("never\ngive\nup")
-                                },
-                                element: JsonElement {
-                                    value: JsonValue::String(JsonString {
-                                        string: String::from("never\nsurrender")
-                                    })
-                                }
+                            element: JsonElement {
+                                value: JsonValue::String(JsonString {
+                                    string: String::from("\"\\/\\b\\f\n\r\t"),
+                                }),
                             },
-                            JsonMember {
-                                string: JsonString{
-                                    string: String::from("hex")
-                                },
-                                element: JsonElement {
-                                    value: JsonValue::String(JsonString {
-                                        string: String::from("\\u0000\\uFFFF")
-                                    })
-                                }
+                        },
+                        JsonMember {
+                            string: JsonString {
+                                string: String::from("never\ngive\nup"),
                             },
-                        ]
-                    }
-                )
-            }
+                            element: JsonElement {
+                                value: JsonValue::String(JsonString {
+                                    string: String::from("never\nsurrender"),
+                                }),
+                            },
+                        },
+                        JsonMember {
+                            string: JsonString {
+                                string: String::from("hex"),
+                            },
+                            element: JsonElement {
+                                value: JsonValue::String(JsonString {
+                                    string: String::from("\\u0000\\uFFFF"),
+                                }),
+                            },
+                        },
+                    ],
+                }),
+            },
         };
         let json_result = handle_file("tests/step5/valid3.json");
         assert!(json_result.is_ok());

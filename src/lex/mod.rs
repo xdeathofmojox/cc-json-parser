@@ -1,6 +1,6 @@
 use crate::data::Token;
-use std::io::Error;
 use std::collections::VecDeque;
+use std::io::Error;
 
 pub fn lex(string: &mut &str) -> Result<VecDeque<Token>, Error> {
     let mut result: VecDeque<Token> = VecDeque::new();
@@ -99,12 +99,15 @@ fn lex_string(string: &mut &str) -> Result<Option<Token>, Error> {
             } else {
                 let new_char = string.chars().next().unwrap();
                 match new_char {
-                    '\u{0020}' ..= '\u{10FFFF}' => {
+                    '\u{0020}'..='\u{10FFFF}' => {
                         new_string.push(new_char);
                         *string = &string[1..];
                     }
                     _ => {
-                        return Err(Error::new(std::io::ErrorKind::InvalidData, "Invalid Unicode Character in String"))
+                        return Err(Error::new(
+                            std::io::ErrorKind::InvalidData,
+                            "Invalid Unicode Character in String",
+                        ));
                     }
                 }
             }
@@ -144,13 +147,19 @@ fn lex_escape(string: &mut &str) -> Result<String, Error> {
         *string = &string[1..];
         Ok(lex_escape_hex(string)?)
     } else {
-        Err(Error::new(std::io::ErrorKind::InvalidData, "Invalid Escape Character"))
+        Err(Error::new(
+            std::io::ErrorKind::InvalidData,
+            "Invalid Escape Character",
+        ))
     }
 }
 
 fn lex_escape_hex(string: &mut &str) -> Result<String, Error> {
     if string.len() < 4 {
-        Err(Error::new(std::io::ErrorKind::InvalidData, "Not enough hex characters in escape"))
+        Err(Error::new(
+            std::io::ErrorKind::InvalidData,
+            "Not enough hex characters in escape",
+        ))
     } else {
         let mut new_string = String::from("\\u");
         let mut chars = string.chars();
@@ -161,7 +170,10 @@ fn lex_escape_hex(string: &mut &str) -> Result<String, Error> {
                     new_string.push(new_char);
                 }
                 _ => {
-                    return Err(Error::new(std::io::ErrorKind::InvalidData, "Invalid Escape Hex Character"))
+                    return Err(Error::new(
+                        std::io::ErrorKind::InvalidData,
+                        "Invalid Escape Hex Character",
+                    ));
                 }
             }
         }
@@ -196,7 +208,11 @@ fn lex_null(string: &mut &str) -> Result<Option<Token>, Error> {
 
 fn lex_whitespace(string: &mut &str) -> Result<Option<Token>, Error> {
     let mut found_whitespace = false;
-    while string.starts_with(' ') || string.starts_with('\n') || string.starts_with('\t') || string.starts_with('\r') {
+    while string.starts_with(' ')
+        || string.starts_with('\n')
+        || string.starts_with('\t')
+        || string.starts_with('\r')
+    {
         *string = &string[1..];
         found_whitespace = true;
     }
@@ -213,26 +229,24 @@ fn lex_number(string: &mut &str) -> Result<Option<Token>, Error> {
         Some('-') => {
             *string = &string[1..];
             Ok(Some(Token::SignNeg))
-        },
+        }
         Some('+') => {
             *string = &string[1..];
             Ok(Some(Token::SignPos))
-        },
+        }
         Some('0'..='9') => {
             *string = &string[1..];
             let dig = char.unwrap().to_digit(10).unwrap();
             Ok(Some(Token::Digit(dig as u8)))
-        },
+        }
         Some('.') => {
             *string = &string[1..];
             Ok(Some(Token::FractionMarker))
-        },
+        }
         Some('e') | Some('E') => {
             *string = &string[1..];
             Ok(Some(Token::ExponentMarker))
         }
-        _ => {
-            Ok(None)
-        }
+        _ => Ok(None),
     }
 }

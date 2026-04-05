@@ -1,6 +1,6 @@
 use crate::data::*;
-use std::io::Error;
 use std::collections::VecDeque;
+use std::io::Error;
 
 pub fn parse(tokens: &mut VecDeque<Token>) -> Result<JsonData, Error> {
     if tokens.is_empty() {
@@ -9,18 +9,24 @@ pub fn parse(tokens: &mut VecDeque<Token>) -> Result<JsonData, Error> {
 
     if let Some(element) = parse_element(tokens)? {
         if tokens.is_empty() {
-            Ok(JsonData {element})
+            Ok(JsonData { element })
         } else {
-            Err(Error::new(std::io::ErrorKind::InvalidData, "Invalid Json: Additional Data Left Over"))
+            Err(Error::new(
+                std::io::ErrorKind::InvalidData,
+                "Invalid Json: Additional Data Left Over",
+            ))
         }
     } else {
-        Err(Error::new(std::io::ErrorKind::InvalidData, "Invalid Json: No Element"))
+        Err(Error::new(
+            std::io::ErrorKind::InvalidData,
+            "Invalid Json: No Element",
+        ))
     }
 }
 
 fn parse_element(tokens: &mut VecDeque<Token>) -> Result<Option<JsonElement>, Error> {
     if let Some(value) = parse_value(tokens)? {
-        Ok(Some(JsonElement {value}))
+        Ok(Some(JsonElement { value }))
     } else {
         Ok(None)
     }
@@ -35,10 +41,13 @@ fn parse_elements(tokens: &mut VecDeque<Token>) -> Result<Option<Vec<JsonElement
             if let Some(element) = parse_element(tokens)? {
                 elements.push(element);
             } else {
-                return Err(Error::new(std::io::ErrorKind::InvalidData, "Failed to parse element"));
+                return Err(Error::new(
+                    std::io::ErrorKind::InvalidData,
+                    "Failed to parse element",
+                ));
             }
         }
-        
+
         return Ok(Some(elements));
     }
 
@@ -69,8 +78,8 @@ fn parse_value(tokens: &mut VecDeque<Token>) -> Result<Option<JsonValue>, Error>
 }
 
 fn parse_object(tokens: &mut VecDeque<Token>) -> Result<Option<JsonObject>, Error> {
-    let mut result = JsonObject {members: vec![]};
-    
+    let mut result = JsonObject { members: vec![] };
+
     if let Some(&Token::OpenParen) = tokens.front() {
         tokens.pop_front();
     } else {
@@ -84,15 +93,18 @@ fn parse_object(tokens: &mut VecDeque<Token>) -> Result<Option<JsonObject>, Erro
     if let Some(&Token::CloseParen) = tokens.front() {
         tokens.pop_front();
     } else {
-        return Err(Error::new(std::io::ErrorKind::InvalidData, "No Closing Paren on Object"));
+        return Err(Error::new(
+            std::io::ErrorKind::InvalidData,
+            "No Closing Paren on Object",
+        ));
     }
 
     Ok(Some(result))
 }
 
 fn parse_array(tokens: &mut VecDeque<Token>) -> Result<Option<JsonArray>, Error> {
-    let mut result = JsonArray {elements: vec![]};
-    
+    let mut result = JsonArray { elements: vec![] };
+
     if let Some(&Token::OpenBracket) = tokens.front() {
         tokens.pop_front();
     } else {
@@ -106,7 +118,10 @@ fn parse_array(tokens: &mut VecDeque<Token>) -> Result<Option<JsonArray>, Error>
     if let Some(&Token::CloseBracket) = tokens.front() {
         tokens.pop_front();
     } else {
-        return Err(Error::new(std::io::ErrorKind::InvalidData, "No Closing Bracket on Array"));
+        return Err(Error::new(
+            std::io::ErrorKind::InvalidData,
+            "No Closing Bracket on Array",
+        ));
     }
 
     Ok(Some(result))
@@ -117,7 +132,10 @@ fn parse_string(tokens: &mut VecDeque<Token>) -> Result<Option<JsonString>, Erro
         if let Token::String(string) = tokens.pop_front().unwrap() {
             return Ok(Some(JsonString { string }));
         } else {
-            return Err(Error::new(std::io::ErrorKind::InvalidData, "String not parsed correctly"));
+            return Err(Error::new(
+                std::io::ErrorKind::InvalidData,
+                "String not parsed correctly",
+            ));
         }
     }
 
@@ -126,7 +144,6 @@ fn parse_string(tokens: &mut VecDeque<Token>) -> Result<Option<JsonString>, Erro
 
 fn parse_number(tokens: &mut VecDeque<Token>) -> Result<Option<JsonNumber>, Error> {
     if let Some(integer) = parse_integer(tokens)? {
-
         let mut fraction = None;
         if let Some(new_fraction) = parse_fraction(tokens)? {
             fraction = Some(new_fraction);
@@ -166,10 +183,16 @@ fn parse_integer(tokens: &mut VecDeque<Token>) -> Result<Option<i64>, Error> {
     }
 
     if neg_sign && !found_nums {
-        Err(Error::new(std::io::ErrorKind::InvalidData, "No digits following sign"))
+        Err(Error::new(
+            std::io::ErrorKind::InvalidData,
+            "No digits following sign",
+        ))
     } else if found_nums {
         if int_value.to_string().len() < chars_found {
-            return Err(Error::new(std::io::ErrorKind::InvalidData, "No leading zeros allowed"));
+            return Err(Error::new(
+                std::io::ErrorKind::InvalidData,
+                "No leading zeros allowed",
+            ));
         }
         if neg_sign {
             int_value = -int_value;
@@ -196,7 +219,10 @@ fn parse_fraction(tokens: &mut VecDeque<Token>) -> Result<Option<u64>, Error> {
         if fraction_found {
             return Ok(Some(fraction_value));
         } else {
-            return Err(Error::new(std::io::ErrorKind::InvalidData, "No fraction component after fraction marker"));
+            return Err(Error::new(
+                std::io::ErrorKind::InvalidData,
+                "No fraction component after fraction marker",
+            ));
         }
     }
     Ok(None)
@@ -227,14 +253,20 @@ fn parse_exponent(tokens: &mut VecDeque<Token>) -> Result<Option<i64>, Error> {
         }
 
         if found_sign && !found_exponent {
-            return Err(Error::new(std::io::ErrorKind::InvalidData, "No digits following sign"));
+            return Err(Error::new(
+                std::io::ErrorKind::InvalidData,
+                "No digits following sign",
+            ));
         } else if found_exponent {
             if neg_sign {
                 exponent_value = -exponent_value;
             }
             return Ok(Some(exponent_value));
         } else {
-            return Err(Error::new(std::io::ErrorKind::InvalidData, "No digits following exponent"));
+            return Err(Error::new(
+                std::io::ErrorKind::InvalidData,
+                "No digits following exponent",
+            ));
         }
     }
     Ok(None)
@@ -249,13 +281,16 @@ fn parse_members(tokens: &mut VecDeque<Token>) -> Result<Option<Vec<JsonMember>>
             if let Some(member) = parse_member(tokens)? {
                 members.push(member);
             } else {
-                return Err(Error::new(std::io::ErrorKind::InvalidData, "Failed to parse members"));
+                return Err(Error::new(
+                    std::io::ErrorKind::InvalidData,
+                    "Failed to parse members",
+                ));
             }
         }
-        
+
         return Ok(Some(members));
     }
-    
+
     Ok(None)
 }
 
@@ -271,12 +306,18 @@ fn parse_member(tokens: &mut VecDeque<Token>) -> Result<Option<JsonMember>, Erro
     if let Some(&Token::Colon) = tokens.front() {
         tokens.pop_front();
     } else {
-        return Err(Error::new(std::io::ErrorKind::InvalidData, "No colon in member"));
+        return Err(Error::new(
+            std::io::ErrorKind::InvalidData,
+            "No colon in member",
+        ));
     }
 
     if let Some(element) = parse_element(tokens)? {
-        Ok(Some(JsonMember {string, element}))
+        Ok(Some(JsonMember { string, element }))
     } else {
-        Err(Error::new(std::io::ErrorKind::InvalidData, "No element for string"))
+        Err(Error::new(
+            std::io::ErrorKind::InvalidData,
+            "No element for string",
+        ))
     }
 }

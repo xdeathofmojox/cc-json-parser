@@ -65,5 +65,5 @@ pub enum JsonValue {
     Number(JsonNumber),
     True,
     False,
-    Null
+    Null,
 }
