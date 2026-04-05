@@ -13,13 +13,13 @@
     in
     {
       checks = {
-        #clippy = craneLib.cargoClippy (
-        #  commonArgs
-        #  // {
-        #    inherit cargoArtifacts;
-        #    cargoClippyExtraArgs = "--all-targets -- --deny warnings";
-        #  }
-        #);
+        clippy = craneLib.cargoClippy (
+          commonArgs
+          // {
+            inherit cargoArtifacts;
+            cargoClippyExtraArgs = "--all-targets -- --deny warnings";
+          }
+        );
 
         #tests = craneLib.cargoNextest (commonArgs // { inherit cargoArtifacts; });
 

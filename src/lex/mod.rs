@@ -32,7 +32,7 @@ pub fn lex(string: &mut &str) -> Result<VecDeque<Token>, Error> {
         } else if let Some(token) = lex_number(string)? {
             result.push_back(token);
         } else {
-            return Err(Error::new(std::io::ErrorKind::Other, "Invalid Character"));
+            return Err(Error::other("Invalid Character"));
         }
     }
 
