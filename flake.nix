@@ -1,5 +1,5 @@
 {
-  description = "Coding Challenges Word Count";
+  description = "Coding Challenges JSON Parser";
 
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
