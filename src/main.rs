@@ -1,15 +1,27 @@
-use std::env;
 use std::io;
 use std::process::ExitCode;
 
+use clap::Parser;
+
 use cc_json_parser::{handle_file, json_valid, ParseOptions};
 
+#[derive(Parser)]
+#[command(name = "cc-json-parser", about = "Validate JSON files or stdin")]
+struct Cli {
+    /// Files to validate (reads from stdin if none provided)
+    files: Vec<String>,
+
+    /// Maximum nesting depth (unlimited if not set)
+    #[arg(long)]
+    max_depth: Option<usize>,
+}
+
 fn main() -> ExitCode {
-    let args: Vec<String> = env::args().skip(1).collect();
-    let (options, filenames) = parse_args(&args);
+    let cli = Cli::parse();
+    let options = ParseOptions { max_depth: cli.max_depth };
     let mut status = 0;
 
-    if filenames.is_empty() {
+    if cli.files.is_empty() {
         let stdin = io::stdin();
         let result = json_valid(&mut stdin.lock(), options);
         if result.is_err() {
@@ -20,7 +32,7 @@ fn main() -> ExitCode {
         }
     }
 
-    for filename in filenames {
+    for filename in &cli.files {
         let result = handle_file(filename, options);
         if result.is_err() {
             println!(
@@ -35,20 +47,4 @@ fn main() -> ExitCode {
     }
 
     ExitCode::from(status)
-}
-
-fn parse_args<'a>(args: &'a [String]) -> (ParseOptions, Vec<&'a str>) {
-    let mut max_depth = None;
-    let mut filenames = vec![];
-    let mut iter = args.iter();
-
-    while let Some(arg) = iter.next() {
-        if arg == "--max-depth" {
-            max_depth = iter.next().and_then(|v| v.parse().ok());
-        } else {
-            filenames.push(arg.as_str());
-        }
-    }
-
-    (ParseOptions { max_depth }, filenames)
 }

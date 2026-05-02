@@ -3,6 +3,7 @@ name = "cc-json-parser"
 path = "src/main.rs"
 
 [dependencies]
+clap = { version = "4", features = ["derive"] }
 
 [lib]
 path = "src/lib.rs"
