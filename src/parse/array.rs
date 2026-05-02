@@ -11,7 +11,9 @@ pub fn parse_array(parser: &mut Parser) -> Result<Option<JsonArray>, Error> {
         return Ok(None);
     }
 
+    parser.enter_depth()?;
     let elements = parse_elements(parser)?.unwrap_or_default();
+    parser.exit_depth();
 
     parser.expect(&Token::CloseBracket).map_err(|_| {
         Error::new(

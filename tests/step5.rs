@@ -1,4 +1,4 @@
-use cc_json_parser::handle_file;
+use cc_json_parser::{handle_file, ParseOptions};
 use std::fs;
 
 #[test]
@@ -17,7 +17,7 @@ fn json_checker_tests() {
         let path = entry.path();
         let filename = entry.file_name();
         let name = filename.to_string_lossy();
-        let result = handle_file(path.to_str().unwrap());
+        let result = handle_file(path.to_str().unwrap(), ParseOptions { max_depth: Some(19)});
 
         let passed = if name.starts_with("pass") {
             result.is_ok()

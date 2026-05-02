@@ -12,13 +12,12 @@ pub fn parse_object(parser: &mut Parser) -> Result<Option<JsonObject>, Error> {
         return Ok(None);
     }
 
+    parser.enter_depth()?;
     let members = parse_members(parser)?.unwrap_or_default();
+    parser.exit_depth();
 
     parser.expect(&Token::CloseParen).map_err(|_| {
-        Error::new(
-            std::io::ErrorKind::InvalidData,
-            "No Closing Paren on Object",
-        )
+        Error::new(std::io::ErrorKind::InvalidData, "No Closing Paren on Object")
     })?;
 
     Ok(Some(JsonObject { members }))
