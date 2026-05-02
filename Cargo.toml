@@ -1,4 +1,11 @@
+[[bin]]
+name = "cc-json-parser"
+path = "src/main.rs"
+
 [dependencies]
+
+[lib]
+path = "src/lib.rs"
 
 [package]
 name = "cc-json-parser"
