@@ -1,4 +1,4 @@
-use cc_json_parser::{handle_file, JsonData, JsonElement, JsonObject, JsonValue};
+use cc_json_parser::{JsonData, JsonElement, JsonObject, JsonValue, handle_file};
 
 #[test]
 fn valid() {

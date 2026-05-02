@@ -29,11 +29,19 @@ fn json_checker_tests() {
             failures.push(format!(
                 "{}: expected {}, got {}",
                 name,
-                if name.starts_with("pass") { "ok" } else { "err" },
+                if name.starts_with("pass") {
+                    "ok"
+                } else {
+                    "err"
+                },
                 if result.is_ok() { "ok" } else { "err" }
             ));
         }
     }
 
-    assert!(failures.is_empty(), "json-checker failures:\n{}", failures.join("\n"));
+    assert!(
+        failures.is_empty(),
+        "json-checker failures:\n{}",
+        failures.join("\n")
+    );
 }
