@@ -1,4 +1,5 @@
 mod json;
+mod lexer;
 mod literals;
 mod number;
 mod punctuation;

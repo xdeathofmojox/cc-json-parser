@@ -1,26 +1,26 @@
 use crate::data::Token;
 use std::io::Error;
 
-use super::json::Chars;
+use super::lexer::Lexer;
 
-pub fn lex_true(chars: &mut Chars) -> Result<Option<Token>, Error> {
-    lex_keyword(chars, "true", Token::True)
+pub fn lex_true(lexer: &mut Lexer) -> Result<Option<Token>, Error> {
+    lex_keyword(lexer, "true", Token::True)
 }
 
-pub fn lex_false(chars: &mut Chars) -> Result<Option<Token>, Error> {
-    lex_keyword(chars, "false", Token::False)
+pub fn lex_false(lexer: &mut Lexer) -> Result<Option<Token>, Error> {
+    lex_keyword(lexer, "false", Token::False)
 }
 
-pub fn lex_null(chars: &mut Chars) -> Result<Option<Token>, Error> {
-    lex_keyword(chars, "null", Token::Null)
+pub fn lex_null(lexer: &mut Lexer) -> Result<Option<Token>, Error> {
+    lex_keyword(lexer, "null", Token::Null)
 }
 
-fn lex_keyword(chars: &mut Chars, keyword: &str, token: Token) -> Result<Option<Token>, Error> {
-    if chars.peek() != keyword.chars().next().as_ref() {
+fn lex_keyword(lexer: &mut Lexer, keyword: &str, token: Token) -> Result<Option<Token>, Error> {
+    if lexer.peek() != keyword.chars().next() {
         return Ok(None);
     }
     for expected in keyword.chars() {
-        match chars.next() {
+        match lexer.consume() {
             Some(c) if c == expected => {}
             _ => {
                 return Err(Error::new(

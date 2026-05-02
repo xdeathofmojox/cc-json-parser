@@ -1,34 +1,33 @@
 use crate::data::Token;
 use std::io::Error;
 
-use super::json::Chars;
+use super::lexer::Lexer;
 
-pub fn lex_string(chars: &mut Chars) -> Result<Option<Token>, Error> {
-    if chars.peek() != Some(&'"') {
+pub fn lex_string(lexer: &mut Lexer) -> Result<Option<Token>, Error> {
+    if !lexer.consume_if('"') {
         return Ok(None);
     }
-    chars.next();
 
     let mut s = String::new();
     loop {
-        match chars.peek() {
+        match lexer.peek() {
             None => {
                 return Err(Error::new(
                     std::io::ErrorKind::InvalidData,
                     "Unterminated string",
                 ));
             }
-            Some(&'"') => {
-                chars.next();
+            Some('"') => {
+                lexer.consume();
                 break;
             }
-            Some(&'\\') => {
-                chars.next();
-                s.push_str(&lex_escape(chars)?);
+            Some('\\') => {
+                lexer.consume();
+                s.push_str(&lex_escape(lexer)?);
             }
-            Some(&c) if c >= '\u{0020}' => {
+            Some(c) if c >= '\u{0020}' => {
                 s.push(c);
-                chars.next();
+                lexer.consume();
             }
             _ => {
                 return Err(Error::new(
@@ -42,8 +41,8 @@ pub fn lex_string(chars: &mut Chars) -> Result<Option<Token>, Error> {
     Ok(Some(Token::String(s)))
 }
 
-fn lex_escape(chars: &mut Chars) -> Result<String, Error> {
-    match chars.next() {
+fn lex_escape(lexer: &mut Lexer) -> Result<String, Error> {
+    match lexer.consume() {
         Some('"') => Ok(String::from("\"")),
         Some('\\') => Ok(String::from("\\")),
         Some('/') => Ok(String::from("/")),
@@ -52,7 +51,7 @@ fn lex_escape(chars: &mut Chars) -> Result<String, Error> {
         Some('n') => Ok(String::from("\n")),
         Some('r') => Ok(String::from("\r")),
         Some('t') => Ok(String::from("\t")),
-        Some('u') => lex_escape_hex(chars),
+        Some('u') => lex_escape_hex(lexer),
         _ => Err(Error::new(
             std::io::ErrorKind::InvalidData,
             "Invalid Escape Character",
@@ -60,10 +59,10 @@ fn lex_escape(chars: &mut Chars) -> Result<String, Error> {
     }
 }
 
-fn lex_escape_hex(chars: &mut Chars) -> Result<String, Error> {
+fn lex_escape_hex(lexer: &mut Lexer) -> Result<String, Error> {
     let mut s = String::from("\\u");
     for _ in 0..4 {
-        match chars.next() {
+        match lexer.consume() {
             Some(c @ ('0'..='9' | 'a'..='f' | 'A'..='F')) => s.push(c),
             _ => {
                 return Err(Error::new(

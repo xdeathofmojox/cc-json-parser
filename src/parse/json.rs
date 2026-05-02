@@ -2,15 +2,18 @@ use crate::data::{JsonData, Token};
 use std::collections::VecDeque;
 use std::io::Error;
 
+use super::parser::Parser;
 use super::value::parse_element;
 
-pub fn parse(tokens: &mut VecDeque<Token>) -> Result<JsonData, Error> {
-    if tokens.is_empty() {
+pub fn parse(tokens: VecDeque<Token>) -> Result<JsonData, Error> {
+    let mut parser = Parser::new(tokens);
+
+    if parser.is_empty() {
         return Err(Error::new(std::io::ErrorKind::InvalidData, "Empty Json"));
     }
 
-    if let Some(element) = parse_element(tokens)? {
-        if tokens.is_empty() {
+    if let Some(element) = parse_element(&mut parser)? {
+        if parser.is_empty() {
             Ok(JsonData { element })
         } else {
             Err(Error::new(

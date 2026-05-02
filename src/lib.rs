@@ -12,8 +12,8 @@ use std::io::{BufRead, BufReader, Error};
 pub fn json_valid<R: BufRead>(reader: &mut R) -> Result<JsonData, Error> {
     let mut s = String::new();
     reader.read_to_string(&mut s)?;
-    let mut tokens = lex::lex(&s)?;
-    let json_data = parse::parse(&mut tokens)?;
+    let tokens = lex::lex(&s)?;
+    let json_data = parse::parse(tokens)?;
     Ok(json_data)
 }
 

@@ -1,9 +1,9 @@
-use super::json::Chars;
+use super::lexer::Lexer;
 
-pub fn lex_whitespace(chars: &mut Chars) -> bool {
+pub fn lex_whitespace(lexer: &mut Lexer) -> bool {
     let mut found = false;
-    while matches!(chars.peek(), Some(' ' | '\n' | '\t' | '\r')) {
-        chars.next();
+    while matches!(lexer.peek(), Some(' ' | '\n' | '\t' | '\r')) {
+        lexer.consume();
         found = true;
     }
     found

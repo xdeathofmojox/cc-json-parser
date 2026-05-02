@@ -1,11 +1,12 @@
 use crate::data::{JsonNumber, Token};
-use std::collections::VecDeque;
 use std::io::Error;
 
-pub fn parse_number(tokens: &mut VecDeque<Token>) -> Result<Option<JsonNumber>, Error> {
-    if let Some(integer) = parse_integer(tokens)? {
-        let fraction = parse_fraction(tokens)?;
-        let exponent = parse_exponent(tokens)?;
+use super::parser::Parser;
+
+pub fn parse_number(parser: &mut Parser) -> Result<Option<JsonNumber>, Error> {
+    if let Some(integer) = parse_integer(parser)? {
+        let fraction = parse_fraction(parser)?;
+        let exponent = parse_exponent(parser)?;
         Ok(Some(JsonNumber {
             integer,
             fraction,
@@ -16,19 +17,19 @@ pub fn parse_number(tokens: &mut VecDeque<Token>) -> Result<Option<JsonNumber>, 
     }
 }
 
-fn parse_integer(tokens: &mut VecDeque<Token>) -> Result<Option<i64>, Error> {
+fn parse_integer(parser: &mut Parser) -> Result<Option<i64>, Error> {
     let mut neg_sign = false;
     let mut found_nums = false;
     let mut int_value: i64 = 0;
     let mut chars_found: usize = 0;
 
-    if let Some(&Token::SignNeg) = tokens.front() {
-        tokens.pop_front();
+    if let Some(&Token::SignNeg) = parser.peek() {
+        parser.consume();
         neg_sign = true;
     }
 
-    while let Some(&Token::Digit(val)) = tokens.front() {
-        tokens.pop_front();
+    while let Some(&Token::Digit(val)) = parser.peek() {
+        parser.consume();
         found_nums = true;
         int_value *= 10;
         int_value += val as i64;
@@ -56,14 +57,14 @@ fn parse_integer(tokens: &mut VecDeque<Token>) -> Result<Option<i64>, Error> {
     }
 }
 
-fn parse_fraction(tokens: &mut VecDeque<Token>) -> Result<Option<u64>, Error> {
-    if let Some(&Token::FractionMarker) = tokens.front() {
-        tokens.pop_front();
+fn parse_fraction(parser: &mut Parser) -> Result<Option<u64>, Error> {
+    if let Some(&Token::FractionMarker) = parser.peek() {
+        parser.consume();
         let mut fraction_found = false;
         let mut fraction_value: u64 = 0;
 
-        while let Some(&Token::Digit(val)) = tokens.front() {
-            tokens.pop_front();
+        while let Some(&Token::Digit(val)) = parser.peek() {
+            parser.consume();
             fraction_value *= 10;
             fraction_value += val as u64;
             fraction_found = true;
@@ -82,25 +83,25 @@ fn parse_fraction(tokens: &mut VecDeque<Token>) -> Result<Option<u64>, Error> {
     }
 }
 
-fn parse_exponent(tokens: &mut VecDeque<Token>) -> Result<Option<i64>, Error> {
-    if let Some(&Token::ExponentMarker) = tokens.front() {
-        tokens.pop_front();
+fn parse_exponent(parser: &mut Parser) -> Result<Option<i64>, Error> {
+    if let Some(&Token::ExponentMarker) = parser.peek() {
+        parser.consume();
         let mut found_exponent = false;
         let mut exponent_value: i64 = 0;
         let mut found_sign = false;
         let mut neg_sign = false;
 
-        if let Some(&Token::SignNeg) = tokens.front() {
-            tokens.pop_front();
+        if let Some(&Token::SignNeg) = parser.peek() {
+            parser.consume();
             found_sign = true;
             neg_sign = true;
-        } else if let Some(&Token::SignPos) = tokens.front() {
-            tokens.pop_front();
+        } else if let Some(&Token::SignPos) = parser.peek() {
+            parser.consume();
             found_sign = true;
         }
 
-        while let Some(&Token::Digit(val)) = tokens.front() {
-            tokens.pop_front();
+        while let Some(&Token::Digit(val)) = parser.peek() {
+            parser.consume();
             exponent_value *= 10;
             exponent_value += val as i64;
             found_exponent = true;
