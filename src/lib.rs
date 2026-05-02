@@ -1,24 +1,11 @@
 mod data;
+mod file_handler;
 mod lex;
 mod parse;
+mod validation;
 
 pub use data::{
     JsonArray, JsonData, JsonElement, JsonMember, JsonNumber, JsonObject, JsonString, JsonValue,
 };
-
-use std::fs::File;
-use std::io::{BufRead, BufReader, Error};
-
-pub fn json_valid<R: BufRead>(reader: &mut R) -> Result<JsonData, Error> {
-    let mut s = String::new();
-    reader.read_to_string(&mut s)?;
-    let tokens = lex::lex(&s)?;
-    let json_data = parse::parse(tokens)?;
-    Ok(json_data)
-}
-
-pub fn handle_file(filename: &str) -> Result<JsonData, Error> {
-    let file = File::open(filename)?;
-    let mut reader = BufReader::new(file);
-    json_valid(&mut reader)
-}
+pub use file_handler::handle_file;
+pub use validation::json_valid;
