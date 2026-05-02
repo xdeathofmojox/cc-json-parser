@@ -1,26 +1,34 @@
 use crate::data::Token;
 use std::io::Error;
 
-pub fn lex_true(string: &mut &str) -> Result<Option<Token>, Error> {
-    if string.starts_with("true") {
-        *string = &string[4..];
-        return Ok(Some(Token::True));
-    }
-    Ok(None)
+use super::json::Chars;
+
+pub fn lex_true(chars: &mut Chars) -> Result<Option<Token>, Error> {
+    lex_keyword(chars, "true", Token::True)
 }
 
-pub fn lex_false(string: &mut &str) -> Result<Option<Token>, Error> {
-    if string.starts_with("false") {
-        *string = &string[5..];
-        return Ok(Some(Token::False));
-    }
-    Ok(None)
+pub fn lex_false(chars: &mut Chars) -> Result<Option<Token>, Error> {
+    lex_keyword(chars, "false", Token::False)
 }
 
-pub fn lex_null(string: &mut &str) -> Result<Option<Token>, Error> {
-    if string.starts_with("null") {
-        *string = &string[4..];
-        return Ok(Some(Token::Null));
+pub fn lex_null(chars: &mut Chars) -> Result<Option<Token>, Error> {
+    lex_keyword(chars, "null", Token::Null)
+}
+
+fn lex_keyword(chars: &mut Chars, keyword: &str, token: Token) -> Result<Option<Token>, Error> {
+    if chars.peek() != keyword.chars().next().as_ref() {
+        return Ok(None);
     }
-    Ok(None)
+    for expected in keyword.chars() {
+        match chars.next() {
+            Some(c) if c == expected => {}
+            _ => {
+                return Err(Error::new(
+                    std::io::ErrorKind::InvalidData,
+                    "Invalid Character",
+                ));
+            }
+        }
+    }
+    Ok(Some(token))
 }

@@ -15,5 +15,4 @@ pub enum Token {
     True,
     False,
     Null,
-    Whitespace,
 }

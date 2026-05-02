@@ -1,19 +1,10 @@
-use crate::data::Token;
-use std::io::Error;
+use super::json::Chars;
 
-pub fn lex_whitespace(string: &mut &str) -> Result<Option<Token>, Error> {
-    let mut found_whitespace = false;
-    while string.starts_with(' ')
-        || string.starts_with('\n')
-        || string.starts_with('\t')
-        || string.starts_with('\r')
-    {
-        *string = &string[1..];
-        found_whitespace = true;
+pub fn lex_whitespace(chars: &mut Chars) -> bool {
+    let mut found = false;
+    while matches!(chars.peek(), Some(' ' | '\n' | '\t' | '\r')) {
+        chars.next();
+        found = true;
     }
-
-    if found_whitespace {
-        return Ok(Some(Token::Whitespace));
-    }
-    Ok(None)
+    found
 }

@@ -10,33 +10,36 @@ use super::punctuation::{
 use super::string::lex_string;
 use super::whitespace::lex_whitespace;
 
-pub fn lex(string: &mut &str) -> Result<VecDeque<Token>, Error> {
+pub type Chars<'a> = std::iter::Peekable<std::str::Chars<'a>>;
+
+pub fn lex(input: &str) -> Result<VecDeque<Token>, Error> {
+    let mut chars = input.chars().peekable();
     let mut result: VecDeque<Token> = VecDeque::new();
 
-    while !string.is_empty() {
-        if let Some(token) = lex_open_paren(string)? {
+    while chars.peek().is_some() {
+        if let Some(token) = lex_open_paren(&mut chars)? {
             result.push_back(token);
-        } else if let Some(token) = lex_close_paren(string)? {
+        } else if let Some(token) = lex_close_paren(&mut chars)? {
             result.push_back(token);
-        } else if let Some(token) = lex_open_bracket(string)? {
+        } else if let Some(token) = lex_open_bracket(&mut chars)? {
             result.push_back(token);
-        } else if let Some(token) = lex_close_bracket(string)? {
+        } else if let Some(token) = lex_close_bracket(&mut chars)? {
             result.push_back(token);
-        } else if let Some(token) = lex_comma(string)? {
+        } else if let Some(token) = lex_comma(&mut chars)? {
             result.push_back(token);
-        } else if let Some(token) = lex_colon(string)? {
+        } else if let Some(token) = lex_colon(&mut chars)? {
             result.push_back(token);
-        } else if let Some(token) = lex_string(string)? {
+        } else if let Some(token) = lex_string(&mut chars)? {
             result.push_back(token);
-        } else if let Some(token) = lex_true(string)? {
-            result.push_back(token);
-        } else if let Some(token) = lex_false(string)? {
-            result.push_back(token);
-        } else if let Some(token) = lex_null(string)? {
-            result.push_back(token);
-        } else if lex_whitespace(string)?.is_some() {
+        } else if lex_whitespace(&mut chars) {
             // whitespace is skipped
-        } else if let Some(token) = lex_number(string)? {
+        } else if let Some(token) = lex_number(&mut chars)? {
+            result.push_back(token);
+        } else if let Some(token) = lex_true(&mut chars)? {
+            result.push_back(token);
+        } else if let Some(token) = lex_false(&mut chars)? {
+            result.push_back(token);
+        } else if let Some(token) = lex_null(&mut chars)? {
             result.push_back(token);
         } else {
             return Err(Error::other("Invalid Character"));
